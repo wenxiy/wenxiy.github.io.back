@@ -79,12 +79,10 @@
 <li>GestureDetector：手势检测，辅助检测用户的单机、滑动、长按、双击</li>
 </ul>
 <p>首先创建一个GestureDetector对象，这个对象实现接口OnGetureListener，还可以去实现OnDoubleTapListener监听双击行为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GestureDetector mgestureDetector &#x3D;new GestureDetector(this)</span><br><span class="line">mgestureDetector.setIsLongpressEnabled(false)&#x2F;&#x2F;解决长按屏幕无法拖动的现象</span><br></pre></td></tr></table></figure>
-
-<p>在待监听的View的onTouchEvent方法中添加</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">boolean consume&#x3D;mGestureDetector.onTouchEvent(event);</span><br><span class="line">return consume;</span><br></pre></td></tr></table></figure>
-
-<p>至此，就可以去实现监听和接口的方法了</p>
+<pre><code>GestureDetector mgestureDetector =new GestureDetector(this)
+mgestureDetector.setIsLongpressEnabled(false)//解决长按屏幕无法拖动的现象</code></pre><p>在待监听的View的onTouchEvent方法中添加</p>
+<pre><code>boolean consume=mGestureDetector.onTouchEvent(event);
+return consume;</code></pre><p>至此，就可以去实现监听和接口的方法了</p>
 <p>![image-20200528120533453](/Users/wenxin/Library/Application Support/typora-user-images/image-20200528120533453.png)</p>
 <ul>
 <li>Scroller：弹性滑动对象，实现View的弹性滑动</li>
@@ -118,9 +116,10 @@
 <li>重新设置滑动组件的marginLeft参数（2）</li>
 </ul>
 <p>（2）来实现</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MarginLayoutParams params&#x3D;(MarginLayoutParams)mButton1.getLayoutParams();</span><br><span class="line">params.width+&#x3D;100;&#x2F;&#x2F;参数变化</span><br><span class="line">params.leftMargin+&#x3D;100;&#x2F;&#x2F;参数变化</span><br><span class="line">mButton1.requestLayout();&#x2F;&#x2F;重新排布局，刷新布局，这样就达到了滑动的效果</span><br></pre></td></tr></table></figure>
-
-<h4 id="滑动方式的对比"><a href="#滑动方式的对比" class="headerlink" title="滑动方式的对比"></a>滑动方式的对比</h4><ul>
+<pre><code>MarginLayoutParams params=(MarginLayoutParams)mButton1.getLayoutParams();
+params.width+=100;//参数变化
+params.leftMargin+=100;//参数变化
+mButton1.requestLayout();//重新排布局，刷新布局，这样就达到了滑动的效果</code></pre><h4 id="滑动方式的对比"><a href="#滑动方式的对比" class="headerlink" title="滑动方式的对比"></a>滑动方式的对比</h4><ul>
 <li>scrollTo/scrollBy:View的原生方法，专门用于View的滑动，方便，不影响点击事件，但是只能滑动View本身不能滑动VIew本身</li>
 <li>动画：采用属性动画的办法是一种比较好的办法，几乎没有缺点。复杂效果必须要通过动画来实现，如果无交互需求的话可以采用动画，操作简单</li>
 <li>改变布局：使用麻烦，主要适用有交互性的View</li>

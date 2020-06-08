@@ -42,9 +42,10 @@
 <p>在启动gcc编译器的时候会首先调用将插入所有用#include命令指定的文件，并且扩展宏</p>
 <p>其次编译器将.c文件转换为汇编语言的.s文件</p>
 <p>最后汇编器将汇编代码转换为二进制目标代码文件.o</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">gcc -O2 -S code.c</span><br><span class="line">gcc -O2 -C code.c</span><br><span class="line">objdump -d code.o</span><br><span class="line">movl $0x4050,%eax                          Immediate-Register</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://s1.ax1x.com/2020/06/07/t2vZ5R.png" alt="image-20200517173220188" loading="lazy"></p>
+<pre><code>gcc -O2 -S code.c
+gcc -O2 -C code.c
+objdump -d code.o
+movl $0x4050,%eax                          Immediate-Register</code></pre><p><img src="https://s1.ax1x.com/2020/06/07/t2vZ5R.png" alt="image-20200517173220188" loading="lazy"></p>
 <ul>
 <li>跳转指令：跳转到另一行指令（指令一般是一行一行的执行）</li>
 </ul>
@@ -78,8 +79,10 @@
 <li><p>程序栈是用来保存数据的，栈指针是%esp就是%rsp，用来保存着栈顶元素（栈顶元素的地址是最低的（栈是向下增长的））</p>
 </li>
 <li><p>举例：我们想将一个双字压入堆栈中，首先将栈指针减去4，然后将值写到新的栈顶地址。所以 </p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pushl %ebp</span><br><span class="line">等价于</span><br><span class="line">subl $4,%esp</span><br><span class="line">movl %esp,(%esp)</span><br></pre></td></tr></table></figure>
-</li>
+<pre><code>pushl %ebp
+等价于
+subl $4,%esp
+movl %esp,(%esp)</code></pre></li>
 <li><p>弹出一个双字就是popl指令，它也等价于先将值写到栈顶指针里，再将指针加4</p>
 </li>
 </ul>
