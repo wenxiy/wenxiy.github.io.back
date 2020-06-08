@@ -1,0 +1,169 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="温鑫"><meta name="copyright" content="温鑫"><meta name="generator" content="Hexo 4.2.1"><meta name="theme" content="hexo-theme-yun"><title>Android开发艺术探索读书笔记 | wenxiy</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;family=Source+Code+Pro&amp;display=swap" media="none" onload="this.media='all'"><script src="//at.alicdn.com/t/font_1140697_pem9yni52s.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link rel="shortcut icon" type="image/svg+xml" href="/yun.svg"><link rel="mask-icon" href="/yun.svg" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"root":"/","title":"温鑫的博客","version":"0.8.1","anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><meta name="description" content="Android开发艺术探索读书笔记自定义view 定义 View是所有控件的基类：Button、Textview View是一种界面层空间的抽象，VIew与ViewGroup代表了控件和控件组  这意味着View本身可以是单个控件也可以是由多个控件组成的一个控件组，这种结构就形成了一种View树的结构 类似于前端的DOM树  View的层级结构   Object-View-TextView-Tes">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android开发艺术探索读书笔记">
+<meta property="og:url" content="http://yoursite.com/2020/06/08/%E8%87%AA%E5%AE%9A%E4%B9%89view/index.html">
+<meta property="og:site_name" content="wenxiy">
+<meta property="og:description" content="Android开发艺术探索读书笔记自定义view 定义 View是所有控件的基类：Button、Textview View是一种界面层空间的抽象，VIew与ViewGroup代表了控件和控件组  这意味着View本身可以是单个控件也可以是由多个控件组成的一个控件组，这种结构就形成了一种View树的结构 类似于前端的DOM树  View的层级结构   Object-View-TextView-Tes">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-06-08T06:08:54.000Z">
+<meta property="article:modified_time" content="2020-06-07T16:37:37.470Z">
+<meta property="article:author" content="温鑫">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary"></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle sidebar-toggle-fixed hty-icon-button"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><aside class="sidebar"><script defer src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="Table of Contents"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="Overview"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="温鑫"><img width="96" loading="lazy" src="/OIP.jpeg" alt="温鑫"></a><div class="site-author-name"><a href="/about/">温鑫</a></div><a class="site-name" href="/about/site.html">wenxiy</a><sub class="site-subtitle"></sub><div class="site-desciption">一个努力中的Android Developer</div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="Home"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item site-state-posts"><a href="/archives/" title="Archives"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">3</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/" title="Tags"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">2</span></a></div><a class="site-state-item hty-icon-button" href="https://yun.yunyoujun.cn" target="_blank" rel="noopener" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="/atom.xml" title="RSS" target="_blank" style="color:orange"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-rss-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" title="QQ" target="_blank" style="color:#12B7F5"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-qq-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/wenxiy" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" title="微博" target="_blank" style="color:#E6162D"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-weibo-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" title="豆瓣" target="_blank" style="color:#007722"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-douban-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" title="网易云音乐" target="_blank" style="color:#C20C0C"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-netease-cloud-music-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" title="知乎" target="_blank" style="color:#0084FF"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-zhihu-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" title="哔哩哔哩" target="_blank" style="color:#FF8EB3"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-bilibili-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://twitter.com/YunYouJun" title="Twitter" target="_blank" style="color:#1da1f2"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-twitter-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://t.me/elpsycn" title="Telegram Channel" target="_blank" style="color:#0088CC"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-telegram-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="mailto:me@yunyoujun.cn" title="E-Mail" target="_blank" style="color:#8E71C1"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-mail-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://travellings.now.sh/" title="Travelling" target="_blank" style="color:var(--hty-text-color)"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-send-plane-2-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#Android开发艺术探索读书笔记"><span class="toc-number">1.</span> <span class="toc-text">Android开发艺术探索读书笔记</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#自定义view"><span class="toc-number"></span> <span class="toc-text">自定义view</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#VIew的宽高和坐标关系："><span class="toc-number">1.</span> <span class="toc-text">VIew的宽高和坐标关系：</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MotionEvent和TouchSlop"><span class="toc-number">2.</span> <span class="toc-text">MotionEvent和TouchSlop</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#VelocityTracker、GestureDestector和Scroller"><span class="toc-number">3.</span> <span class="toc-text">VelocityTracker、GestureDestector和Scroller</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#View的滑动（第一种View的滑动效果实现）"><span class="toc-number">4.</span> <span class="toc-text">View的滑动（第一种View的滑动效果实现）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#动画的使用（第二种实现View的滑动效果）"><span class="toc-number">5.</span> <span class="toc-text">动画的使用（第二种实现View的滑动效果）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#改变布局参数（第三中实现View的滑动效果）"><span class="toc-number">6.</span> <span class="toc-text">改变布局参数（第三中实现View的滑动效果）</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#滑动方式的对比"><span class="toc-number">7.</span> <span class="toc-text">滑动方式的对比</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#弹性滑动"><span class="toc-number"></span> <span class="toc-text">弹性滑动</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#方法一：使用Scroller"><span class="toc-number">1.</span> <span class="toc-text">方法一：使用Scroller</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#方法二：通过动画"><span class="toc-number">2.</span> <span class="toc-text">方法二：通过动画</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#方法三：通过延迟策略"><span class="toc-number">3.</span> <span class="toc-text">方法三：通过延迟策略</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#View的事件分发机制"><span class="toc-number"></span> <span class="toc-text">View的事件分发机制</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#事件分发的源码解析"><span class="toc-number"></span> <span class="toc-text">事件分发的源码解析</span></a></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/06/08/%E8%87%AA%E5%AE%9A%E4%B9%89view/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="温鑫"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="wenxiy"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Android开发艺术探索读书笔记</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="Created: 2020-06-08 14:08:54" itemprop="dateCreated datePublished" datetime="2020-06-08T14:08:54+08:00">2020-06-08</time></div><div class="post-classify"><span class="post-tag"><a class="tag" href="/tags/Android/" style="--text-color:#4fc08d"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">Android</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content post-markdown"><h4 id="Android开发艺术探索读书笔记"><a href="#Android开发艺术探索读书笔记" class="headerlink" title="Android开发艺术探索读书笔记"></a>Android开发艺术探索读书笔记</h4><h2 id="自定义view"><a href="#自定义view" class="headerlink" title="自定义view"></a>自定义view</h2><ul>
+<li><p>定义</p>
+<p>View是所有控件的基类：Button、Textview View是一种界面层空间的抽象，VIew与ViewGroup代表了控件和控件组  这意味着View本身可以是单个控件也可以是由多个控件组成的一个控件组，这种结构就形成了一种View树的结构 类似于前端的DOM树</p>
+</li>
+<li><p>View的层级结构</p>
+</li>
+</ul>
+<p>Object-View-TextView-TestButton</p>
+<ul>
+<li>View的位置参数</li>
+</ul>
+<p>VIew的位置主要是由四个顶点的位置来决定的：top（左上角纵坐标）、left（左上角横坐标）、right（右下角横坐标）、bottom（右下角纵坐标）（这都是一种相对坐标）</p>
+<p>![View](/Users/wenxin/Library/Application Support/typora-user-images/image-20200526213943485.png)</p>
+<h4 id="VIew的宽高和坐标关系："><a href="#VIew的宽高和坐标关系：" class="headerlink" title="VIew的宽高和坐标关系："></a>VIew的宽高和坐标关系：</h4><ul>
+<li>width=right-left   height=bottom-top</li>
+</ul>
+<p>利用Left=getLeft();  Right=getRight();  Top=getTop; Bottom=getBottom().</p>
+<ul>
+<li>从Android3.0开始，View新增了X，Y，translationXhetranslationY</li>
+</ul>
+<p>XY是左上角的图标 translationX和TranslationY是对于父容器的偏移量，默认值为0</p>
+<p>View也提供了set和get方法给这两个参数</p>
+<p>换算关系如下</p>
+<p>X=left+translationX</p>
+<p>y=top+translationY</p>
+<p>View在平移的过程中 top和left是表示原始左上角的位置信息，值并不会发生改变</p>
+<h4 id="MotionEvent和TouchSlop"><a href="#MotionEvent和TouchSlop" class="headerlink" title="MotionEvent和TouchSlop"></a>MotionEvent和TouchSlop</h4><ul>
+<li>MotionEvent</li>
+</ul>
+<p>在手指接触屏幕所产生的一系列事件中，典型的事件类型有如下几种</p>
+<p>ACTION_DOWN：手指刚接触屏幕</p>
+<p>ACTION_MOVE：手指在屏幕上移动;</p>
+<p>ACTION_UP：手机从屏幕上松开的一瞬间</p>
+<p>一般会有这两种情况：</p>
+<ul>
+<li>手指点击屏幕后再松开：DOWN-&gt;UP</li>
+<li>手指点击屏幕滑动一会后松开：DOWN-&gt;MOVE-&gt;….-&gt;MOVE-&gt;UP</li>
+</ul>
+<p>通过MotionEvent对象来获得点击事件发生的X和Y坐标。</p>
+<p>getX/getY/getRawX/getRawY</p>
+<p>getX和getY是返回当前View左上角的X和Y坐标。而getRawX和getRawY是返回手机屏幕最上角的X和Y坐标</p>
+<ul>
+<li>TouchSlop</li>
+</ul>
+<p>定义：系统所能识别出的被认为是滑动的最小距离</p>
+<p>当滑动的距离小于这个值的时候，系统就不任务进行了一次滑动。所以说TouchSlop是一个常量</p>
+<p>我们通过ViewConfiguration.get(getComtext()).getScaledTouchSlop()来获得</p>
+<h4 id="VelocityTracker、GestureDestector和Scroller"><a href="#VelocityTracker、GestureDestector和Scroller" class="headerlink" title="VelocityTracker、GestureDestector和Scroller"></a>VelocityTracker、GestureDestector和Scroller</h4><ul>
+<li>VelocityTracker：速度追踪，用于追踪手指在滑动过程中的速度，包括水平和竖直方向的速度</li>
+</ul>
+<p>方法：VIew的onTouchEvent方法VelocityTracker.obtain();来追踪事件的速度</p>
+<p>此时我们需要去添加事件从而进行追踪当前事件的速度：velocityTracker.addMovement(event);//添加这个事件</p>
+<p><font color=##FF0000>我们再先计算速度，再去获取速度(都是这个流程)</font></p>
+<p>计算速度：velocityTracker.computeCurrentVelocity(1000)//在1000ms中经过的像素数 从左往右为正，从右往左为负</p>
+<p>然后再去get</p>
+<p>最后当我们不需要VelocityTracker这个对象的时候去：</p>
+<p>velocityTracker.clear();</p>
+<p>velocityTracker.recycle();</p>
+<ul>
+<li>GestureDetector：手势检测，辅助检测用户的单机、滑动、长按、双击</li>
+</ul>
+<p>首先创建一个GestureDetector对象，这个对象实现接口OnGetureListener，还可以去实现OnDoubleTapListener监听双击行为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GestureDetector mgestureDetector &#x3D;new GestureDetector(this)</span><br><span class="line">mgestureDetector.setIsLongpressEnabled(false)&#x2F;&#x2F;解决长按屏幕无法拖动的现象</span><br></pre></td></tr></table></figure>
+
+<p>在待监听的View的onTouchEvent方法中添加</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">boolean consume&#x3D;mGestureDetector.onTouchEvent(event);</span><br><span class="line">return consume;</span><br></pre></td></tr></table></figure>
+
+<p>至此，就可以去实现监听和接口的方法了</p>
+<p>![image-20200528120533453](/Users/wenxin/Library/Application Support/typora-user-images/image-20200528120533453.png)</p>
+<ul>
+<li>Scroller：弹性滑动对象，实现View的弹性滑动</li>
+</ul>
+<p>具体3.2中讲解</p>
+<h4 id="View的滑动（第一种View的滑动效果实现）"><a href="#View的滑动（第一种View的滑动效果实现）" class="headerlink" title="View的滑动（第一种View的滑动效果实现）"></a>View的滑动（第一种View的滑动效果实现）</h4><ul>
+<li>scrollTo/scrollBy：View专门实现滑动的功能所提供的方法。</li>
+</ul>
+<p>scrollTo是一种绝对滑动 scrollBy是一种在To的基础上的相对滑动</p>
+<p>“如果从左向右滑动，那么mScrollX为负值，反之为正值；如果从上往下滑动，那么mScrollY为负值，反之为正值。”</p>
+<p>摘录来自: 任玉刚. “Android开发艺术探索。”</p>
+<p>![image-20200528123941299](/Users/wenxin/Library/Application Support/typora-user-images/image-20200528123941299.png)</p>
+<h4 id="动画的使用（第二种实现View的滑动效果）"><a href="#动画的使用（第二种实现View的滑动效果）" class="headerlink" title="动画的使用（第二种实现View的滑动效果）"></a>动画的使用（第二种实现View的滑动效果）</h4><ul>
+<li><p>定义：使用动画来移动View，而不是平移（滑动）来移动View</p>
+</li>
+<li><p>分类</p>
+<ul>
+<li>传统动画：</li>
+<li>属性动画：采用开源库</li>
+</ul>
+</li>
+<li><p>注意：VIew的动画只是对View的一个影像做的操作，没有真正的改变View的位置参数，宽与高</p>
+</li>
+<li><p>具体在第五章《Android开发艺术探索》讲解</p>
+</li>
+</ul>
+<h4 id="改变布局参数（第三中实现View的滑动效果）"><a href="#改变布局参数（第三中实现View的滑动效果）" class="headerlink" title="改变布局参数（第三中实现View的滑动效果）"></a>改变布局参数（第三中实现View的滑动效果）</h4><p>通过改变布局参数从而来实现VIew的滑动</p>
+<p>两种办法：</p>
+<ul>
+<li>设置一个空的View来“挤”需要滑动的组件（1）</li>
+<li>重新设置滑动组件的marginLeft参数（2）</li>
+</ul>
+<p>（2）来实现</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">MarginLayoutParams params&#x3D;(MarginLayoutParams)mButton1.getLayoutParams();</span><br><span class="line">params.width+&#x3D;100;&#x2F;&#x2F;参数变化</span><br><span class="line">params.leftMargin+&#x3D;100;&#x2F;&#x2F;参数变化</span><br><span class="line">mButton1.requestLayout();&#x2F;&#x2F;重新排布局，刷新布局，这样就达到了滑动的效果</span><br></pre></td></tr></table></figure>
+
+<h4 id="滑动方式的对比"><a href="#滑动方式的对比" class="headerlink" title="滑动方式的对比"></a>滑动方式的对比</h4><ul>
+<li>scrollTo/scrollBy:View的原生方法，专门用于View的滑动，方便，不影响点击事件，但是只能滑动View本身不能滑动VIew本身</li>
+<li>动画：采用属性动画的办法是一种比较好的办法，几乎没有缺点。复杂效果必须要通过动画来实现，如果无交互需求的话可以采用动画，操作简单</li>
+<li>改变布局：使用麻烦，主要适用有交互性的View</li>
+</ul>
+<h3 id="弹性滑动"><a href="#弹性滑动" class="headerlink" title="弹性滑动"></a>弹性滑动</h3><ul>
+<li>思想：将一次大的滑动分成若干次小的滑动并在一段时间内完成，</li>
+</ul>
+<h4 id="方法一：使用Scroller"><a href="#方法一：使用Scroller" class="headerlink" title="方法一：使用Scroller"></a>方法一：使用Scroller</h4><p>当我们new了一个新的Scroller对象时，我们调用startScrooller方法时，我们只是保存了几个我们传递的参数</p>
+<p>,这表示我们并不是利用Scroller的start来实现一种滑动的。我们调用invalidate方法，证明：invalidate方法导致view重绘，在View的draw方法中又回去调用computeScroll方法，computeScroll方法在View中是一个空实现</p>
+<p>所以需要自己去实现，应为这个方法才会去实现弹性的滑动</p>
+<p>在computerScroll方法中，返回值是一个布尔，如果返回的是对的，证明这个View滑动还没有结束。反之结束</p>
+<h4 id="方法二：通过动画"><a href="#方法二：通过动画" class="headerlink" title="方法二：通过动画"></a>方法二：通过动画</h4><p>使用ObjectAnimator.ofFloat(yargetView,“translationx”,0,100)</p>
+<p>(100).start;</p>
+<p>可以让一个View内容在100ms内向左移动100像素</p>
+<h4 id="方法三：通过延迟策略"><a href="#方法三：通过延迟策略" class="headerlink" title="方法三：通过延迟策略"></a>方法三：通过延迟策略</h4><p>采用Handler或者View的机制</p>
+<h3 id="View的事件分发机制"><a href="#View的事件分发机制" class="headerlink" title="View的事件分发机制"></a>View的事件分发机制</h3><ul>
+<li>点击事件的传递规则</li>
+</ul>
+<p>MotionEvent </p>
+<p>点击事件的传递过程是由三个组成dispatchTouchEvent、onInterceptTouchEvent、onTouchEvent</p>
+<p>dispatchTouchEvent(MotionEvent ev)表示传递给当前View的onTouchEvent和下级的dispatchTouchEvent方法的影响 布尔类型</p>
+<p>表示是否消耗当前事件</p>
+<p>onInterceptTouchEvent(MotionEvent event)在方法中内部调用，用于判断是否拦截某个事件，如果View拦截了某个事件，那么在同一个事件序列当中，此方法不再去调用，返回结果表示是否拦截当前事件 布尔类型</p>
+<p>onTouchEvent方法在DispatchTouchEvent方法中调用，用来处理点击事件，返回结果表示是否消耗当前事件 布尔类型 如果不消耗，则在同一个事件序列中，当前View无法在接收到事件</p>
+<p>“对于一个根ViewGroup来说，点击事件产生后，首先会传递给它，这时它的dispatchTouchEvent就会被调用，如果这个ViewGroup的onInterceptTouchEvent方法返回true就表示它要拦截当前事件，接着事件就会交给这个ViewGroup处理，即它的onTouchEvent方法就会被调用；如果这个ViewGroup的onInterceptTouchEvent方法返回false就表示它不拦截当前事件，这时当前事件就会继续传递给它的子元素，接着子元素的dispatchTouchEvent方法就会被调用，如此反复直到事件被最终处理。”</p>
+<p>摘录来自: 任玉刚. “Android开发艺术探索。” Apple Books. </p>
+<p>上述我们说明了如何去拦截，下面我们来说说怎么处理</p>
+<p>当一个View设置了OnTouchListener</p>
+<p>在OnTouchListener中的onTouch方法被回调，然后这个方法的返回值是false则调用，如果是true则不会调用</p>
+<p>优先级排列：OnTouchListener&gt;OnTouchEvent&gt;OnClickListener</p>
+<ul>
+<li>点击事件的传递顺序：Activity-&gt;Window-&gt;View</li>
+</ul>
+<p>当View接受到事件后，就会按照事件分发机制去处理</p>
+<p>但如果OnTouchEvent返回的结果是false则会往上传递（父类的OnTouchEvent）最后如果解决不了上传至Activity的OnTouchEvent</p>
+<ul>
+<li>整个传递机制</li>
+</ul>
+<ol>
+<li>以Down开始，中间无数的Move，以Up结束</li>
+<li>一个事件序列只能被一个View拦截且消耗</li>
+<li>某个View一旦决定拦截，那么这个事件序列都只能由他来处理</li>
+<li>如果某个View一旦开始处理事件，如果没有消耗ACTION_DOWN事件，就同一时间序列的其他事件都不会再交于他来处理</li>
+</ol>
+<h2 id="事件分发的源码解析"><a href="#事件分发的源码解析" class="headerlink" title="事件分发的源码解析"></a>事件分发的源码解析</h2><p>见书</p>
+</div><div id="reward-container"><span class="hty-icon-button button-glow" id="reward-button" title="Donate" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === &quot;none&quot;) ? &quot;block&quot; : &quot;none&quot;;"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-hand-coin-line"></use></svg></span><div id="reward-comment">I'm so cute. Please give me money.</div><div id="qr" style="display:none;"><div style="display:inline-block"><a href="https://s1.ax1x.com/2020/06/07/t2zV91.jpg" target="_blank" rel="noopener"><img loading="lazy" src="https://s1.ax1x.com/2020/06/07/t2zV91.jpg" alt="支付宝" title="支付宝"></a><div><span style="color:#00A3EE"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-alipay-line"></use></svg></span></div></div><div style="display:inline-block"><a href="https://s1.ax1x.com/2020/06/07/t2zunO.jpg" target="_blank" rel="noopener"><img loading="lazy" src="https://s1.ax1x.com/2020/06/07/t2zunO.jpg" alt="微信支付" title="微信支付"></a><div><span style="color:#2DC100"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-wechat-pay-line"></use></svg></span></div></div></div></div><ul class="post-copyright"><li class="post-copyright-author"><strong>Post author: </strong>温鑫</li><li class="post-copyright-link"><strong>Post link: </strong><a href="http://yoursite.com/2020/06/08/%E8%87%AA%E5%AE%9A%E4%B9%89view/" title="Android开发艺术探索读书笔记">http://yoursite.com/2020/06/08/%E8%87%AA%E5%AE%9A%E4%B9%89view/</a></li><li class="post-copyright-license"><strong>Copyright Notice: </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> unless stating additionally.</li></ul></section></article><div class="post-nav"><div class="post-nav-item"></div><div class="post-nav-item"><a class="post-nav-next" href="/2020/06/07/CSAPP%E4%B8%AA%E4%BA%BA%E7%AC%94%E8%AE%B0/" rel="next" title="CSAPP个人笔记"><span class="post-nav-text">CSAPP个人笔记</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div id="comment"><div class="comment-tooltip text-center"><span>点击按钮跳转 GitHub Issues 评论。</span><br><span>若没有本文 Issue，您可以使用 Comment 模版新建。</span><br><a class="hty-button hty-button--raised" id="github-issues" href="https://github.com/YunYouJun/yunyoujun.github.io/issues?q=is:issue+Android开发艺术探索读书笔记" target="_blank" rel="noopener">GitHub Issues</a></div></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2019 – 2020 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> 温鑫</span></div><div class="powered"><span>Powered by <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> v4.2.1</span><span class="footer-separator">|</span><span>Theme - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v0.8.1</span></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a></div><script defer src="/js/utils.js"></script><script defer src="/js/hexo-theme-yun.js"></script></body></html>
