@@ -15,7 +15,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://s1.ax1x.com/2020/07/17/Uyry28.png">
 <meta property="article:published_time" content="2020-07-17T10:38:06.000Z">
-<meta property="article:modified_time" content="2020-07-17T10:39:02.915Z">
+<meta property="article:modified_time" content="2020-07-17T10:42:44.930Z">
 <meta property="article:author" content="温鑫">
 <meta property="article:tag" content="JAVA">
 <meta name="twitter:card" content="summary">
@@ -31,17 +31,18 @@
 <p>定义一个evenhead链表引用，始终保持=even，所以最后就有</p>
 </li>
 </ul>
-<pre><code>ListNode even = head.hext;
-ListNode odd  = head;
-ListNode evenhead = even;
-while(even!==null&amp;&amp;even.next==null){
-    odd.next=even.next;//覆盖偶数节点(第一步)
-    odd=odd.next;//让奇数节点往后走一步
-  event.next=odd.next;//跳过中间的奇数节点
-    event=event.next;//让偶数节点往后走一步
-}
-odd.next=evenhead;//连接起来
-return odd;//伪代码</code></pre></li>
+<pre class=" language-java"><code class="language-java">ListNode even <span class="token operator">=</span> head<span class="token punctuation">.</span>hext<span class="token punctuation">;</span>
+ListNode odd  <span class="token operator">=</span> head<span class="token punctuation">;</span>
+ListNode evenhead <span class="token operator">=</span> even<span class="token punctuation">;</span>
+<span class="token keyword">while</span><span class="token punctuation">(</span>even<span class="token operator">!=</span><span class="token operator">=</span>null<span class="token operator">&amp;&amp;</span>even<span class="token punctuation">.</span>next<span class="token operator">==</span>null<span class="token punctuation">)</span><span class="token punctuation">{</span>
+    odd<span class="token punctuation">.</span>next<span class="token operator">=</span>even<span class="token punctuation">.</span>next<span class="token punctuation">;</span><span class="token comment" spellcheck="true">//覆盖偶数节点(第一步)</span>
+    odd<span class="token operator">=</span>odd<span class="token punctuation">.</span>next<span class="token punctuation">;</span><span class="token comment" spellcheck="true">//让奇数节点往后走一步</span>
+  event<span class="token punctuation">.</span>next<span class="token operator">=</span>odd<span class="token punctuation">.</span>next<span class="token punctuation">;</span><span class="token comment" spellcheck="true">//跳过中间的奇数节点</span>
+    event<span class="token operator">=</span>event<span class="token punctuation">.</span>next<span class="token punctuation">;</span><span class="token comment" spellcheck="true">//让偶数节点往后走一步</span>
+<span class="token punctuation">}</span>
+odd<span class="token punctuation">.</span>next<span class="token operator">=</span>evenhead<span class="token punctuation">;</span><span class="token comment" spellcheck="true">//连接起来</span>
+<span class="token keyword">return</span> odd<span class="token punctuation">;</span><span class="token comment" spellcheck="true">//伪代码</span></code></pre>
+</li>
 <li><p>分割链表</p>
 <ul>
 <li><p>题目重述：给定一个链表和一个x，将链表元素小于或等于x的放在x的左边，大于x的放在x的右边。</p>
@@ -66,34 +67,36 @@ return odd;//伪代码</code></pre></li>
 </li>
 <li><p>解决办法：先证明一下相遇的情况，再根据结果进行一个编写。</p>
 <p>相遇了则证明有环，数学证明发现一个从相遇点一步一步走，一个从头一步一步走，再次相遇的时候就是环的入口。所以我们先要找到相遇点、再让其同时一步一步走就可以。</p>
-<pre><code>if(head==null){
-    return head;
-}
-ListNOde fast=head;
-ListNode slow=head;
-while(fast!=null){    
-    fast=fast.next.next;
-  slow=slow.next;
-    if(fast==slow){
-        break;
-    }
-}//第一次相遇，证明有环
-fast=head;
-while(fast!=null&amp;&amp;fast.next!=null){
-    fast=fast.next;
-    slow=slow.next;
-    if(fast==slow){
-        break;
-    }
-}
-return fast;</code></pre><pre><code>//如果没有环我们需要改变一下第一个while里的if的条件
-while(fas!=null){
-  if(fast==null||fast.next==null) return null;
+<pre class=" language-java"><code class="language-java"><span class="token keyword">if</span><span class="token punctuation">(</span>head<span class="token operator">==</span>null<span class="token punctuation">)</span><span class="token punctuation">{</span>
+    <span class="token keyword">return</span> head<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+ListNOde fast<span class="token operator">=</span>head<span class="token punctuation">;</span>
+ListNode slow<span class="token operator">=</span>head<span class="token punctuation">;</span>
+<span class="token keyword">while</span><span class="token punctuation">(</span>fast<span class="token operator">!=</span>null<span class="token punctuation">)</span><span class="token punctuation">{</span>    
+    fast<span class="token operator">=</span>fast<span class="token punctuation">.</span>next<span class="token punctuation">.</span>next<span class="token punctuation">;</span>
+  slow<span class="token operator">=</span>slow<span class="token punctuation">.</span>next<span class="token punctuation">;</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span>fast<span class="token operator">==</span>slow<span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span><span class="token comment" spellcheck="true">//第一次相遇，证明有环</span>
+fast<span class="token operator">=</span>head<span class="token punctuation">;</span>
+<span class="token keyword">while</span><span class="token punctuation">(</span>fast<span class="token operator">!=</span>null<span class="token operator">&amp;&amp;</span>fast<span class="token punctuation">.</span>next<span class="token operator">!=</span>null<span class="token punctuation">)</span><span class="token punctuation">{</span>
+    fast<span class="token operator">=</span>fast<span class="token punctuation">.</span>next<span class="token punctuation">;</span>
+    slow<span class="token operator">=</span>slow<span class="token punctuation">.</span>next<span class="token punctuation">;</span>
+    <span class="token keyword">if</span><span class="token punctuation">(</span>fast<span class="token operator">==</span>slow<span class="token punctuation">)</span><span class="token punctuation">{</span>
+        <span class="token keyword">break</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">return</span> fast<span class="token punctuation">;</span></code></pre>
+<pre class=" language-java"><code class="language-java"><span class="token comment" spellcheck="true">//如果没有环我们需要改变一下第一个while里的if的条件</span>
+<span class="token keyword">while</span><span class="token punctuation">(</span>fas<span class="token operator">!=</span>null<span class="token punctuation">)</span><span class="token punctuation">{</span>
+  <span class="token keyword">if</span><span class="token punctuation">(</span>fast<span class="token operator">==</span>null<span class="token operator">||</span>fast<span class="token punctuation">.</span>next<span class="token operator">==</span>null<span class="token punctuation">)</span> <span class="token keyword">return</span> null<span class="token punctuation">;</span>
   ···
   ···
-}
+<span class="token punctuation">}</span>
 ···
-···</code></pre><p>后面的拓展：如果要没有环要选择返回null</p>
+···</code></pre>
+<p>后面的拓展：如果要没有环要选择返回null</p>
 </li>
 </ul>
 </li>
