@@ -1,0 +1,188 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="theme-color" content="#0078E7"><meta name="author" content="温鑫"><meta name="copyright" content="温鑫"><meta name="generator" content="Hexo 4.2.1"><meta name="theme" content="hexo-theme-yun"><title>Android权限问题 | wenxiy</title><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@900&amp;family=Source+Code+Pro&amp;display=swap" media="none" onload="this.media='all'"><script src="//at.alicdn.com/t/font_1140697_pem9yni52s.js" async></script><script src="https://cdn.jsdelivr.net/npm/scrollreveal/dist/scrollreveal.min.js" defer></script><script>document.addEventListener("DOMContentLoaded", () => {
+  [".post-card",".post-content img"].forEach((target)=> {
+    ScrollReveal().reveal(target);
+  })
+});
+</script><link rel="shortcut icon" type="image/svg+xml" href="/yun.svg"><link rel="mask-icon" href="/yun.svg" color="#0078E7"><link rel="alternate icon" href="/yun.ico"><link rel="preload" href="/css/hexo-theme-yun.css" as="style"><link rel="preload" href="/js/utils.js" as="script"><link rel="preload" href="/js/hexo-theme-yun.js" as="script"><link rel="prefetch" href="/js/sidebar.js" as="script"><link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin><link rel="stylesheet" href="/css/hexo-theme-yun.css"><script id="yun-config">
+    const Yun = window.Yun || {};
+    window.CONFIG = {"root":"/","title":"温鑫的博客","version":"0.8.1","anonymous_image":"https://cdn.jsdelivr.net/gh/YunYouJun/cdn/img/avatar/none.jpg","say":{"api":"https://v1.hitokoto.cn","hitokoto":true},"fireworks":{"colors":["102, 167, 221","62, 131, 225","33, 78, 194"]}};
+  </script><meta name="description" content="Android请求权限问题 概念 如何操作 源码解析  概念因为Android应用都是在类似于沙盒的中允许，只能访问沙盒内部的资源，如果想要访问沙盒外的资源就需要去请求权限。 在Android 6（不包含Android 6）以下的时候我们经常是当我们安装应用的时候，会提示用户是否允许，当升级应用需要更多权限的时候也会进行一个提示，在Android 6 （包含Android6）以上 ，Google改">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android权限问题">
+<meta property="og:url" content="http://wenxiy.site/2020/08/15/Android%E6%9D%83%E9%99%90%E9%97%AE%E9%A2%98/index.html">
+<meta property="og:site_name" content="wenxiy">
+<meta property="og:description" content="Android请求权限问题 概念 如何操作 源码解析  概念因为Android应用都是在类似于沙盒的中允许，只能访问沙盒内部的资源，如果想要访问沙盒外的资源就需要去请求权限。 在Android 6（不包含Android 6）以下的时候我们经常是当我们安装应用的时候，会提示用户是否允许，当升级应用需要更多权限的时候也会进行一个提示，在Android 6 （包含Android6）以上 ，Google改">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s1.ax1x.com/2020/08/08/a5Q0Dx.png">
+<meta property="article:published_time" content="2020-08-15T13:51:37.000Z">
+<meta property="article:modified_time" content="2020-08-15T13:51:55.898Z">
+<meta property="article:author" content="温鑫">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s1.ax1x.com/2020/08/08/a5Q0Dx.png"><script src="/js/ui/mode.js"></script><link rel="stylesheet" href="/css/prism.css" type="text/css"></head><body><script defer src="https://cdn.jsdelivr.net/npm/animejs@latest/anime.min.js"></script><script defer src="/js/ui/fireworks.js"></script><canvas class="fireworks"></canvas><div class="container"><a class="sidebar-toggle sidebar-toggle-fixed hty-icon-button"><div class="hamburger hamburger--spin" type="button"><span class="hamburger-box"><span class="hamburger-inner"></span></span></div></a><aside class="sidebar"><script defer src="/js/sidebar.js"></script><ul class="sidebar-nav"><li class="sidebar-nav-item sidebar-nav-toc hty-icon-button sidebar-nav-active" data-target="post-toc-wrap" title="文章目录"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-list-ordered"></use></svg></li><li class="sidebar-nav-item sidebar-nav-overview hty-icon-button" data-target="site-overview-wrap" title="站点概览"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-passport-line"></use></svg></li></ul><div class="sidebar-panel" id="site-overview-wrap"><div class="site-info fix-top"><a class="site-author-avatar" href="/about/" title="温鑫"><img width="96" loading="lazy" src="/John.jpg" alt="温鑫"></a><div class="site-author-name"><a href="/about/">温鑫</a></div><a class="site-name" href="/about/site.html">wenxiy</a><sub class="site-subtitle"></sub><div class="site-desciption">一个努力中的Android Developer</div></div><nav class="site-state"><a class="site-state-item hty-icon-button icon-home" href="/" title="首页"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-home-4-line"></use></svg></span></a><div class="site-state-item site-state-posts"><a href="/archives/" title="归档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-archive-line"></use></svg></span><span class="site-state-item-count">13</span></a></div><div class="site-state-item site-state-tags"><a href="/tags/" title="标签"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="site-state-item-count">4</span></a></div><a class="site-state-item hty-icon-button" href="https://yun.yunyoujun.cn" target="_blank" rel="noopener" title="文档"><span class="site-state-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-settings-line"></use></svg></span></a></nav><hr style="margin-bottom:0.5rem"><div class="links-of-author"><a class="links-of-author-item hty-icon-button" rel="noopener" href="/atom.xml" title="RSS" target="_blank" style="color:orange"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-rss-line"></use></svg></a><a class="links-of-author-item hty-icon-button" rel="noopener" href="https://github.com/wenxiy" title="GitHub" target="_blank" style="color:#6e5494"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-github-line"></use></svg></a></div><hr style="margin:0.5rem 1rem"><div class="links"><a class="links-item hty-icon-button" href="/links/" title="我的小伙伴们" style="color:dodgerblue"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-genderless-line"></use></svg></a></div><br><a class="links-item hty-icon-button" id="toggle-mode-btn" href="javascript:;" title="Mode" style="color: #f1cb64"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-contrast-2-line"></use></svg></a></div><div class="sidebar-panel sidebar-panel-active" id="post-toc-wrap"><div class="post-toc"><div class="post-toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Android请求权限问题"><span class="toc-number">1.</span> <span class="toc-text">Android请求权限问题</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#概念"><span class="toc-number">1.1.</span> <span class="toc-text">概念</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#如何操作"><span class="toc-number">1.2.</span> <span class="toc-text">如何操作</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#申明权限"><span class="toc-number">1.2.1.</span> <span class="toc-text">申明权限</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#检查权限"><span class="toc-number">1.2.2.</span> <span class="toc-text">检查权限</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#申请权限"><span class="toc-number">1.2.3.</span> <span class="toc-text">申请权限</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#查询权限是否申请成功"><span class="toc-number">1.2.4.</span> <span class="toc-text">查询权限是否申请成功</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#源码解析"><span class="toc-number">1.3.</span> <span class="toc-text">源码解析</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#综述"><span class="toc-number">1.4.</span> <span class="toc-text">综述</span></a></li></ol></li></ol></div></div></div></aside><main class="sidebar-translate" id="content"><div id="post"><article class="post-block" itemscope itemtype="https://schema.org/Article"><link itemprop="mainEntityOfPage" href="http://wenxiy.site/2020/08/15/Android%E6%9D%83%E9%99%90%E9%97%AE%E9%A2%98/"><span hidden itemprop="author" itemscope itemtype="https://schema.org/Person"><meta itemprop="name" content="温鑫"><meta itemprop="description"></span><span hidden itemprop="publisher" itemscope itemtype="https://schema.org/Organization"><meta itemprop="name" content="wenxiy"></span><header class="post-header"><h1 class="post-title" itemprop="name headline">Android权限问题</h1><div class="post-meta"><div class="post-time" style="display:inline-block"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-calendar-line"></use></svg></span> <time title="创建时间：2020-08-15 21:51:37" itemprop="dateCreated datePublished" datetime="2020-08-15T21:51:37+08:00">2020-08-15</time></div><div class="post-classify"><span class="post-tag"><a class="tag" href="/tags/Android/" style="--text-color:#4fc08d"><span class="post-meta-item-icon"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-price-tag-3-line"></use></svg></span><span class="tag-name">Android</span></a></span></div></div></header><section class="post-body" itemprop="articleBody"><div class="post-content post-markdown"><h2 id="Android请求权限问题"><a href="#Android请求权限问题" class="headerlink" title="Android请求权限问题"></a>Android请求权限问题</h2><ul>
+<li>概念</li>
+<li>如何操作</li>
+<li>源码解析</li>
+</ul>
+<h3 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h3><p>因为Android应用都是在类似于沙盒的中允许，只能访问沙盒内部的资源，如果想要访问沙盒外的资源就需要去请求权限。</p>
+<p>在Android 6（不包含Android 6）以下的时候我们经常是当我们安装应用的时候，会提示用户是否允许，当升级应用需要更多权限的时候也会进行一个提示，在Android 6 （包含Android6）以上 ，Google改变了这种请求的做法，列出了一些请求的原则，为了更好的去保护用户的隐私</p>
+<ul>
+<li>在用户需要互动时再请求对应的权限</li>
+<li>权限对应某种功能，拒绝此权限不能让用户不能使用APP，只需要拒绝某项功能，并且适当降低应用权限</li>
+<li>不要假设任何系统行为</li>
+</ul>
+<p>在Android 6对于的API是 23，在这里我们可以说SDK可以与API对于，但是二者还是有一些区别，SDK是Software Development Kit（软件开发工具包） API是Application Programming Interface（编程接口）。SDK是程序包，程序包中有一些软件功能，程序包几乎是全封闭的，只有接口可联通外界，这个接口就是API。使用软件功能就通过API。当然在Android SDK可以和API对应起来</p>
+<p>常见场景：</p>
+<ul>
+<li>读取短信信息</li>
+<li>读取日历表的内容</li>
+<li>获得通讯录的内容（联系人，手机号码）</li>
+<li>获取媒体图片</li>
+</ul>
+<p>首先我们可以看一下我们模拟器的权限</p>
+<p><img src="https://s1.ax1x.com/2020/08/08/a5Q0Dx.png" alt="" loading="lazy"></p>
+<p>d 代表的是 directory 目录的意思 -代表的是文件的意思</p>
+<p>后面每3个一组  r=read   w=write  x=execute（执行）</p>
+<p>第一组是自己的权限、第二组是同组的权限（文件所属的用户组），第三组是除了自己和自己组其他组的</p>
+<h3 id="如何操作"><a href="#如何操作" class="headerlink" title="如何操作"></a>如何操作</h3><h4 id="申明权限"><a href="#申明权限" class="headerlink" title="申明权限"></a>申明权限</h4><p>我们需要在ManiFest中申请权限，例如网络请求权限</p>
+<pre class=" language-xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>uses-permission</span> <span class="token attr-name"><span class="token namespace">android:</span>name</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>android.permission.INTERNET<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span></code></pre>
+<p>还有一些常见的权限</p>
+<pre class=" language-xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>uses-permission</span> <span class="token attr-name"><span class="token namespace">android:</span>name</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>android.permission.READ_CONTACTS<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span>         读取联系人
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>uses-permission</span> <span class="token attr-name"><span class="token namespace">android:</span>name</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>android.permission.READ_SMS<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span>              读取短信内容
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>uses-permission</span> <span class="token attr-name"><span class="token namespace">android:</span>name</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>android.permission.DEVICE_POWER<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span>          电源管理
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>uses-permission</span> <span class="token attr-name"><span class="token namespace">android:</span>name</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>android.permission.CAMERA<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span>                拍照
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>uses-permission</span> <span class="token attr-name"><span class="token namespace">android:</span>name</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>android.permission.READ_FRAME_BUFFER<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span>     屏幕截图
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>uses-permission</span> <span class="token attr-name"><span class="token namespace">android:</span>name</span><span class="token attr-value"><span class="token punctuation">=</span><span class="token punctuation">"</span>android.permission.READ_EXTERNAL_STORAGE<span class="token punctuation">"</span></span><span class="token punctuation">/></span></span> 读外部存储（媒体库</code></pre>
+<h4 id="检查权限"><a href="#检查权限" class="headerlink" title="检查权限"></a>检查权限</h4><p>利用checkSelfPermission来检查权限</p>
+<p>checkSelfPermission方法返回一个静态int的Permission_Granted（允许）或者Permission_denied（拒绝）</p>
+<pre class=" language-java"><code class="language-java"><span class="token keyword">int</span> readPermission <span class="token operator">=</span> <span class="token function">checkSelfPermission</span><span class="token punctuation">(</span>Manifest<span class="token punctuation">.</span>permission<span class="token punctuation">.</span>READ_CALENDAR<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">int</span> writePermission <span class="token operator">=</span> <span class="token function">checkSelfPermission</span><span class="token punctuation">(</span>Manifest<span class="token punctuation">.</span>permission<span class="token punctuation">.</span>WRITE_CALENDAR<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span>readPermission <span class="token operator">!=</span>PackageManager<span class="token punctuation">.</span>PERMISSION_GRANTED<span class="token punctuation">)</span><span class="token punctuation">{</span>
+<span class="token comment" spellcheck="true">//这里表示没有读的权限</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span>writePermission <span class="token operator">!=</span>PackageManager<span class="token punctuation">.</span>PERMISSION_GRANTED<span class="token punctuation">)</span><span class="token punctuation">{</span>
+<span class="token comment" spellcheck="true">//表示没有写的权利后该怎么做</span>
+<span class="token punctuation">}</span></code></pre>
+<p>如果当检查权限的时候，没有权限（返回PERMISSION_DENIED）</p>
+<p>Google提供了一种方法：让开发者去说明应用为什么需要这个权限</p>
+<p>如果 <code>ContextCompat.checkSelfPermission()</code> 方法返回 <code>PERMISSION_DENIED</code>，请调用 [<code>shouldShowRequestPermissionRationale()</code>](<a href="https://developer.android.com/reference/androidx/core/app/ActivityCompat?hl=zh-cn#shouldShowRequestPermissionRationale" target="_blank" rel="noopener">https://developer.android.com/reference/androidx/core/app/ActivityCompat?hl=zh-cn#shouldShowRequestPermissionRationale</a>(android.app.Activity, java.lang.String))。如果此方法返回 <code>true</code>，请向用户显示指导界面。请在此界面中说明用户希望启用的功能为何需要特定权限。</p>
+<h4 id="申请权限"><a href="#申请权限" class="headerlink" title="申请权限"></a>申请权限</h4><p>当用户查看指导界面后或 <code>shouldShowRequestPermissionRationale()</code> 的返回值表明不需要显示指导界面后，可以请求权限。用户会看到系统权限对话框，并可在其中选择是否向应用授予特定权限</p>
+<p>我们先申请这个权限：</p>
+<p> <code>requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISION_REQUEST_CODE);</code></p>
+<p>关于<code>shouldShowRequestPermissionRationale()</code>方法发现了一个很神奇的事情</p>
+<p>如果我们在代码中这么写</p>
+<pre class=" language-java"><code class="language-java"> <span class="token keyword">private</span> <span class="token keyword">void</span> <span class="token function">checkPermission</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token comment" spellcheck="true">//checkSelfPermission方法返回一个静态的Permission_Granted（允许）或者Permission_denied（拒绝）</span>
+        <span class="token keyword">int</span> readExStoragePermissonRest <span class="token operator">=</span> <span class="token function">checkSelfPermission</span><span class="token punctuation">(</span>Manifest<span class="token punctuation">.</span>permission<span class="token punctuation">.</span>READ_EXTERNAL_STORAGE<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment" spellcheck="true">//许可授权的结果返回给readExStoragePermissonRest</span>
+        <span class="token comment" spellcheck="true">/**
+         * 如果访问的结果是拒绝，那么就请求这个权限
+         */</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>readExStoragePermissonRest <span class="token operator">!=</span> PackageManager<span class="token punctuation">.</span>PERMISSION_GRANTED<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token comment" spellcheck="true">/**
+             * READ_EXTERNAL_STORAGE是外部的存储
+             */</span>
+            <span class="token function">shouldShowRequestPermissionRationale</span><span class="token punctuation">(</span>Manifest<span class="token punctuation">.</span>permission<span class="token punctuation">.</span>READ_EXTERNAL_STORAGE<span class="token punctuation">)</span><span class="token punctuation">;</span>
+            Log<span class="token punctuation">.</span><span class="token function">d</span><span class="token punctuation">(</span>TAG<span class="token punctuation">,</span> <span class="token string">"result"</span> <span class="token operator">+</span> <span class="token string">"----->"</span> <span class="token operator">+</span><span class="token function">shouldShowRequestPermissionRationale</span><span class="token punctuation">(</span>Manifest<span class="token punctuation">.</span>permission<span class="token punctuation">.</span>READ_EXTERNAL_STORAGE<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token function">requestPermissions</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">{</span>Manifest<span class="token punctuation">.</span>permission<span class="token punctuation">.</span>READ_EXTERNAL_STORAGE<span class="token punctuation">}</span><span class="token punctuation">,</span>      
+            PERMISION_REQUEST_CODE<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+
+
+    <span class="token punctuation">}</span></code></pre>
+<p>我们查看log日志：</p>
+<p><code>D/.MainActivity: result-----&gt;false</code></p>
+<p>显示的是false</p>
+<p>这里我们就要知道权限的种类</p>
+<p>权限分为：</p>
+<ul>
+<li>允许：通过</li>
+<li>拒绝：拒绝了<strong>但是还要询问</strong></li>
+<li>禁止：拒绝了且<strong>不再询问</strong></li>
+</ul>
+<p>这个方法大部分时候都会返回false，只有当用户<strong>拒绝</strong>了权限，才能够返回true来进行引导</p>
+<p>也就是说当我们第一次点了拒绝以后，我们就把这个方法的结果设为了true，我们就可以判断这个参数，从而进行引导界面的跳转</p>
+<p>总结一下，各种返回情况是：</p>
+<ul>
+<li><p>没有请求这个权限，那用户不一定拒绝，那么我就不用去说明，所以<code>shouldShowRequestPermissionRationable</code>返回的是false</p>
+</li>
+<li><p>第一次我允许了这个权限，我允许了就不用再去解释为什么需要这个权限，所以我的<code>shouldShowRequestPermissionRationale</code>返回值是false</p>
+</li>
+<li><p>第一次我点了拒绝这个权限，并且点了不再弹出，那么就相当于我的禁止，所以我也不会给你去解释这个权限，所以我的<code>shouldShowRequestPermissionRationale</code>返回值是false</p>
+</li>
+<li><p>第一次我点了拒绝这个权限，但是我没有点不再弹出，这个时候<code>shouldShowRequestPermissionRationale</code>就返回true，从而去进行引导</p>
+</li>
+</ul>
+<h4 id="查询权限是否申请成功"><a href="#查询权限是否申请成功" class="headerlink" title="查询权限是否申请成功"></a>查询权限是否申请成功</h4><pre class=" language-java"><code class="language-java"> <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">onRequestPermissionsResult</span><span class="token punctuation">(</span><span class="token keyword">int</span> requestCode<span class="token punctuation">,</span> <span class="token annotation punctuation">@NonNull</span> String<span class="token punctuation">[</span><span class="token punctuation">]</span> permissions<span class="token punctuation">,</span> <span class="token annotation punctuation">@NonNull</span> <span class="token keyword">int</span><span class="token punctuation">[</span><span class="token punctuation">]</span> grantResults<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">super</span><span class="token punctuation">.</span><span class="token function">onRequestPermissionsResult</span><span class="token punctuation">(</span>requestCode<span class="token punctuation">,</span> permissions<span class="token punctuation">,</span> grantResults<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>requestCode<span class="token operator">==</span>PERMISION_REQUEST_CODE<span class="token punctuation">)</span><span class="token punctuation">{</span>
+            <span class="token keyword">if</span> <span class="token punctuation">(</span>grantResults<span class="token punctuation">.</span>length<span class="token operator">></span><span class="token number">0</span><span class="token operator">&amp;&amp;</span>grantResults<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token operator">==</span>PackageManager<span class="token punctuation">.</span>PERMISSION_GRANTED<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+                <span class="token comment" spellcheck="true">//以下是申请成功</span>
+            <span class="token punctuation">}</span>
+            <span class="token keyword">else</span> <span class="token punctuation">{</span>
+                <span class="token comment" spellcheck="true">//以下是申请失败</span>
+            <span class="token punctuation">}</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+</code></pre>
+<h3 id="源码解析"><a href="#源码解析" class="headerlink" title="源码解析"></a>源码解析</h3><p>我们先来看一下申请权限requestPermissions的源码</p>
+<pre class=" language-java"><code class="language-java"> <span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">void</span> <span class="token function">requestPermissions</span><span class="token punctuation">(</span><span class="token annotation punctuation">@NonNull</span> String<span class="token punctuation">[</span><span class="token punctuation">]</span> permissions<span class="token punctuation">,</span> <span class="token keyword">int</span> requestCode<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>requestCode <span class="token operator">&lt;</span> <span class="token number">0</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">IllegalArgumentException</span><span class="token punctuation">(</span><span class="token string">"requestCode should be >= 0"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>mHasCurrentPermissionsRequest<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            Log<span class="token punctuation">.</span><span class="token function">w</span><span class="token punctuation">(</span>TAG<span class="token punctuation">,</span> <span class="token string">"Can request only one set of permissions at a time"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token comment" spellcheck="true">// Dispatch the callback with empty arrays which means a cancellation.</span>
+            <span class="token function">onRequestPermissionsResult</span><span class="token punctuation">(</span>requestCode<span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">String</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">,</span> <span class="token keyword">new</span> <span class="token class-name">int</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token keyword">return</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        Intent intent <span class="token operator">=</span> <span class="token function">getPackageManager</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">buildRequestPermissionsIntent</span><span class="token punctuation">(</span>permissions<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token function">startActivityForResult</span><span class="token punctuation">(</span>REQUEST_PERMISSIONS_WHO_PREFIX<span class="token punctuation">,</span> intent<span class="token punctuation">,</span> requestCode<span class="token punctuation">,</span> null<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        mHasCurrentPermissionsRequest <span class="token operator">=</span> <span class="token boolean">true</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token keyword">public</span> Intent <span class="token function">buildRequestPermissionsIntent</span><span class="token punctuation">(</span><span class="token annotation punctuation">@NonNull</span> String<span class="token punctuation">[</span><span class="token punctuation">]</span> permissions<span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>ArrayUtils<span class="token punctuation">.</span><span class="token function">isEmpty</span><span class="token punctuation">(</span>permissions<span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+           <span class="token keyword">throw</span> <span class="token keyword">new</span> <span class="token class-name">IllegalArgumentException</span><span class="token punctuation">(</span><span class="token string">"permission cannot be null or empty"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        Intent intent <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Intent</span><span class="token punctuation">(</span>ACTION_REQUEST_PERMISSIONS<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        intent<span class="token punctuation">.</span><span class="token function">putExtra</span><span class="token punctuation">(</span>EXTRA_REQUEST_PERMISSIONS_NAMES<span class="token punctuation">,</span> permissions<span class="token punctuation">)</span><span class="token punctuation">;</span>
+        intent<span class="token punctuation">.</span><span class="token function">setPackage</span><span class="token punctuation">(</span><span class="token function">getPermissionControllerPackageName</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token keyword">return</span> intent<span class="token punctuation">;</span>
+    <span class="token punctuation">}</span></code></pre>
+<p>首先这个是没有返回值的，而且我们规定requestcode的值要大于等于0</p>
+<p>其次我们在这个方法中创建了一个Intent，先利用getPackageManager来获取一个PackageManager对象（PackageManager服务管理的类，用于管理应用程序包。通过此我们来获取应用程序的信息，而且获取的信息都来自AndroidManifest文件）</p>
+<p>利用packageManager调用方法来将Permission放进intent，然后返回这个intent</p>
+<p>startActivityForResult进行数据的传输，当发送了这个广播的时候，我们就会调用权限动态调用申请的界面</p>
+<p>这个是利用GrantPermissionsActivity来完成的，这个界面就是常见的申请权限的界面</p>
+<h3 id="综述"><a href="#综述" class="headerlink" title="综述"></a>综述</h3><ol>
+<li>申明权限</li>
+<li>检查权限（checkSelfPermission）</li>
+<li>申请权限（requestPermissions）</li>
+<li>检查是否申明成功（onRequestPermissionsResult）</li>
+</ol>
+</div><div id="reward-container"><span class="hty-icon-button button-glow" id="reward-button" title="打赏" onclick="var qr = document.getElementById(&quot;qr&quot;); qr.style.display = (qr.style.display === &quot;none&quot;) ? &quot;block&quot; : &quot;none&quot;;"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-hand-coin-line"></use></svg></span><div id="reward-comment">I'm so cute. Please give me money.</div><div id="qr" style="display:none;"><div style="display:inline-block"><a href="https://s1.ax1x.com/2020/06/08/tWNMvj.jpg" target="_blank" rel="noopener"><img loading="lazy" src="https://s1.ax1x.com/2020/06/08/tWNMvj.jpg" alt="支付宝" title="支付宝"></a><div><span style="color:#00A3EE"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-alipay-line"></use></svg></span></div></div><div style="display:inline-block"><a href="https://s1.ax1x.com/2020/06/08/tWNlKs.jpg" target="_blank" rel="noopener"><img loading="lazy" src="https://s1.ax1x.com/2020/06/08/tWNlKs.jpg" alt="微信支付" title="微信支付"></a><div><span style="color:#2DC100"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-wechat-pay-line"></use></svg></span></div></div></div></div><ul class="post-copyright"><li class="post-copyright-author"><strong>本文作者：</strong>温鑫</li><li class="post-copyright-link"><strong>本文链接：</strong><a href="http://wenxiy.site/2020/08/15/Android%E6%9D%83%E9%99%90%E9%97%AE%E9%A2%98/" title="Android权限问题">http://wenxiy.site/2020/08/15/Android%E6%9D%83%E9%99%90%E9%97%AE%E9%A2%98/</a></li><li class="post-copyright-license"><strong>版权声明：</strong>本博客所有文章除特别声明外，均默认采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh" target="_blank" rel="noopener" title="CC BY-NC-SA 4.0 "><svg class="icon"><use xlink:href="#icon-creative-commons-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-by-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-nc-line"></use></svg><svg class="icon"><use xlink:href="#icon-creative-commons-sa-line"></use></svg></a> 许可协议。</li></ul></section></article><div class="post-nav"><div class="post-nav-item"></div><div class="post-nav-item"><a class="post-nav-next" href="/2020/07/17/%E4%B8%80%E5%91%A8%E4%B8%80%E6%AC%A1%E7%9A%84LeetCode%E9%A2%98%E7%9B%AE%E6%80%BB%E7%BB%93/" rel="next" title="一周一次的LeetCode题目总结（一）"><span class="post-nav-text">一周一次的LeetCode题目总结（一）</span><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-right-s-line"></use></svg></a></div></div></div><div id="comment"><div class="comment-tooltip text-center"><span>点击按钮跳转 GitHub Issues 评论。</span><br><span>若没有本文 Issue，您可以使用 Comment 模版新建。</span><br><a class="hty-button hty-button--raised" id="github-issues" href="https://github.com/YunYouJun/yunyoujun.github.io/issues?q=is:issue+Android权限问题" target="_blank" rel="noopener">GitHub Issues</a></div><div id="valine-container"></div><script src="https://cdn.jsdelivr.net/npm/valine@latest/dist/Valine.min.js"></script><script>function initValine() {
+  const valineConfig = {"enable":true,"appId":"6VyDtqsM17IgTGtfEuqRtKGU-gzGzoHsz","appKey":"7nQJo7oNdyqJ0dvga6sYsS8f","placeholder":"Just go go","avatar":null,"pageSize":10,"visitor":false,"highlight":true,"recordIP":false,"enableQQ":true,"el":"#valine-container","lang":"zh-cn"}
+  valineConfig.path = window.location.pathname
+  new Valine(valineConfig)
+}
+setTimeout(initValine, 1000)</script></div></main><footer class="sidebar-translate" id="footer"><div class="copyright"><span>&copy; 2020 </span><span class="with-love" id="animate"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-cloud-line"></use></svg></span><span class="author"> 温鑫</span></div><div class="powered"><span>由 <a href="https://hexo.io" target="_blank" rel="noopener">Hexo</a> 驱动 v4.2.1</span><span class="footer-separator">|</span><span>主题 - <a rel="noopener" href="https://github.com/YunYouJun/hexo-theme-yun" target="_blank"><span>Yun</span></a> v0.8.1</span></div><div class="live_time"><span>本博客已苟延残喘地运行</span><span id="display_live_time"></span><span class="moe-text">(●'◡'●)</span><script>function blog_live_time() {
+  window.setTimeout(blog_live_time, 1000);
+  const start = new Date('2020-06-06T00:00:00');
+  const now = new Date();
+  const timeDiff = (now.getTime() - start.getTime());
+  const msPerMinute = 60 * 1000;
+  const msPerHour = 60 * msPerMinute;
+  const msPerDay = 24 * msPerHour;
+  const passDay = Math.floor(timeDiff / msPerDay);
+  const passHour = Math.floor((timeDiff % msPerDay) / 60 / 60 / 1000);
+  const passMinute = Math.floor((timeDiff % msPerHour) / 60 / 1000);
+  const passSecond = Math.floor((timeDiff % msPerMinute) / 1000);
+  display_live_time.innerHTML = " " + passDay + " 天 " + passHour + " 小时 " + passMinute + " 分 " + passSecond + " 秒";
+}
+blog_live_time();
+</script></div></footer><a class="hty-icon-button" id="goUp" aria-label="back-to-top" href="#"><svg class="icon" aria-hidden="true"><use xlink:href="#icon-arrow-up-s-line"></use></svg><svg class="progress-circle-container" viewBox="0 0 100 100"><circle class="progress-circle" id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="#0078E7" stroke-width="2" stroke-linecap="round"></circle></svg></a><script>let date = new Date();
+let today = (date.getMonth() + 1) + "-" + date.getDate()
+if ("4-4,9-18,3-30".indexOf(today) !== -1) {
+  document.documentElement.style.filter = "grayscale(1)";
+}</script></div><script defer src="/js/utils.js"></script><script defer src="/js/hexo-theme-yun.js"></script></body></html>
